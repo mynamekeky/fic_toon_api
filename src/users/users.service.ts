@@ -20,7 +20,7 @@ export class UsersService {
 
     return this.prisma.user.create({
       data: {
-        userName: createUserDto.username,
+        username: createUserDto.username,
         password: createUserDto.password,
         email: createUserDto.email,
         name: createUserDto.name,
@@ -33,8 +33,8 @@ export class UsersService {
     return this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
-    return this.prisma.user.findUnique({ where: { id } });
+  async findOne(id: number) {
+    return await this.prisma.user.findUnique({ where: { id } });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

@@ -13,7 +13,7 @@ export class AuthService {
     constructor(private prisma: PrismaService, private jwtService: JwtService) { }
 
     async login(username: string, password: string): Promise<object> {
-        const user = await this.prisma.user.findFirst({ where: { userName: username } });
+        const user = await this.prisma.user.findFirst({ where: { username: username } });
 
         if (!user) {
             throw new NotFoundException(`No user found for username: ${username}`);

@@ -13,14 +13,47 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   name      String
-  userName  String
+  username  String
   password  String
   email     String   @unique
   role      Role     @default(MEMBER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  works      Work[]
 
   @@map("user")
+}
+
+model Work {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id])
+  title    String
+  picture  String
+  tagline  String   @db.Text
+  type     Type
+  category Category
+  intro    String   @db.Text
+  status   Status
+
+  @@map("works")
+}
+
+enum Status {
+  public
+  hidden
+}
+
+enum Category {
+  Love
+  Comedy
+  Horror
+  Secret
+}
+
+enum Type {
+  FICTION
+  CARTOON
 }
 
 enum Role {
