@@ -12,7 +12,7 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
     constructor(private prisma: PrismaService, private jwtService: JwtService) { }
 
-    async login(username: string, password: string): Promise<AuthEntity> {
+    async login(username: string, password: string): Promise<object> {
         const user = await this.prisma.user.findFirst({ where: { userName: username } });
 
         if (!user) {
@@ -26,6 +26,7 @@ export class AuthService {
         }
 
         return {
+            status: 200,
             accessToken: this.jwtService.sign({ userId: user.id }),
         };
     }
