@@ -1,5 +1,6 @@
 import {
     Injectable,
+    InternalServerErrorException,
     NotFoundException,
     UnauthorizedException,
 } from '@nestjs/common';
@@ -27,8 +28,18 @@ export class AuthService {
 
         return {
             status: 200,
-            accessToken: this.jwtService.sign({ userId: user.id }),
-            user: user
+            accessToken: this.jwtService.sign({ userId: user.id })
         };
+    }
+
+    async getProfile(req: any): Promise<object> {
+        const user = await this.prisma.user.findFirst({ where: { id: req.id } })
+        if (!user) {
+            throw new InternalServerErrorException
+        }
+        return {
+            status: 200,
+            user: user
+        }
     }
 }
