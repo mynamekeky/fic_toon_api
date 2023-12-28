@@ -11,22 +11,28 @@ export class UsersService {
   constructor(private prisma: PrismaService) { }
 
   async create(createUserDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password,
-      roundsOfHashing,
-    );
+    if (createUserDto.passwordConfirm == createUserDto.password) {
+      const hashedPassword = await bcrypt.hash(
+        createUserDto.password,
+        roundsOfHashing,
+      );
+      createUserDto.password = hashedPassword;
 
-    createUserDto.password = hashedPassword;
-
-    return this.prisma.user.create({
-      data: {
-        username: createUserDto.username,
-        password: createUserDto.password,
-        email: createUserDto.email,
-        name: createUserDto.name,
-        role: createUserDto.role
-      },
-    });
+      return this.prisma.user.create({
+        data: {
+          username: createUserDto.username,
+          password: createUserDto.password,
+          email: createUserDto.email,
+          name: createUserDto.name,
+          role: createUserDto.role
+        },
+      });
+    } else {
+      return {
+        status: 500,
+        message: 'Password Are Not Same'
+      }
+    }
   }
 
   findAll() {
