@@ -13,13 +13,13 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   name      String
-  username  String
+  username  String   @unique
   password  String
   email     String   @unique
   role      Role     @default(MEMBER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  works      Work[]
+  works     Work[]
 
   @@map("user")
 }

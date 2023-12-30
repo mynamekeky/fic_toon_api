@@ -11,27 +11,46 @@ export class UsersService {
   constructor(private prisma: PrismaService) { }
 
   async create(createUserDto: CreateUserDto) {
+    const users = await this.findAll();
+    let data = {
+      username: createUserDto.username,
+      password: createUserDto.password,
+      email: createUserDto.email,
+      name: createUserDto.name,
+      role: createUserDto.role
+    }
+    for (const item of users) {
+      if (createUserDto.username == item.username) {
+        return {
+          status: 500,
+          massage: 'Username Already Exits'
+        }
+      }
+
+      if (createUserDto.email == item.email) {
+        return {
+          status: 500,
+          massage: 'Email Already Exits'
+        }
+      }
+    }
     if (createUserDto.passwordConfirm == createUserDto.password) {
       const hashedPassword = await bcrypt.hash(
         createUserDto.password,
         roundsOfHashing,
       );
       createUserDto.password = hashedPassword;
-
-      return this.prisma.user.create({
-        data: {
-          username: createUserDto.username,
-          password: createUserDto.password,
-          email: createUserDto.email,
-          name: createUserDto.name,
-          role: createUserDto.role
-        },
-      });
+      data.password = createUserDto.password
     } else {
       return {
         status: 500,
         message: 'Password Are Not Same'
       }
+    }
+    const createUser = await this.prisma.user.create({ data })
+    return {
+      status: 200,
+      data: createUser
     }
   }
 
