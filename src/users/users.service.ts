@@ -70,7 +70,7 @@ export class UsersService {
       );
     }
 
-    return this.prisma.user.update({
+    return await this.prisma.user.update({
       where: { id },
       data: updateUserDto,
     });

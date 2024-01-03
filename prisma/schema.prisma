@@ -11,32 +11,80 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   name      String
-  username  String   @unique
+  username  String       @unique
   password  String
-  email     String   @unique
-  role      Role     @default(MEMBER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  email     String       @unique
+  role      Role         @default(MEMBER)
+  coin      Int          @default(100)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   works     Work[]
+  donated   UserDonate[]
 
-  @@map("user")
+  @@map("users")
 }
 
 model Work {
-  id       Int      @id @default(autoincrement())
-  userId   Int
-  user     User     @relation(fields: [userId], references: [id])
-  title    String
-  picture  String
-  tagline  String   @db.Text
-  type     Type
-  category Category
-  intro    String   @db.Text
-  status   Status
+  id         Int         @id @default(autoincrement())
+  userId     Int
+  user       User        @relation(fields: [userId], references: [id])
+  title      String
+  picture    String
+  tagline    String      @db.Text
+  type       Type
+  category   Category
+  intro      String      @db.Text
+  status     Status
+  characters Character[]
+  espisodes  Espisode[]
 
   @@map("works")
+}
+
+model Character {
+  id      Int          @id @default(autoincrement())
+  picture String
+  name    String
+  roleAs  RoleAs
+  work    Work         @relation(fields: [workId], references: [id])
+  workId  Int
+  donated UserDonate[]
+
+  @@map("characters")
+}
+
+model UserDonate {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  character   Character @relation(fields: [characterId], references: [id])
+  characterId Int
+  coin        Int
+
+  @@map("userDonates")
+}
+
+model Espisode {
+  id          Int               @id @default(autoincrement())
+  title       String
+  contentText String            @db.Text
+  work        Work              @relation(fields: [workId], references: [id])
+  workId      Int
+  status      Status
+  pictures    EspisodePicture[]
+
+  @@map("espisodes")
+}
+
+model EspisodePicture {
+  id         Int      @id @default(autoincrement())
+  picture    String
+  espisode   Espisode @relation(fields: [espisodeId], references: [id])
+  espisodeId Int
+
+  @@map("espisodePictures")
 }
 
 enum Status {
@@ -60,4 +108,11 @@ enum Role {
   MEMBER
   CREATOR
   ADMIN
+}
+
+enum RoleAs {
+  Hero //พระเอก
+  Heroine //นางเอก
+  Villain //ตัวร้าย
+  Main //ตัวหลัก
 }

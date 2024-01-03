@@ -4,28 +4,28 @@ import { IsEnum } from "class-validator"
 
 export class CreateWorkDto {
 
-    @ApiProperty()
+    @ApiProperty({ required: true, })
     title: string
 
-    @ApiProperty()
-    picture: string
+    @ApiProperty({ type: "string", format: "binary" })
+    file: Express.Multer.File
 
-    @ApiProperty()
+    @ApiProperty({ required: true, })
     tagline: string
 
     @IsEnum(Type)
-    @ApiProperty()
+    @ApiProperty({ required: true, })
     type: Type
 
     @IsEnum(Category)
-    @ApiProperty()
+    @ApiProperty({ required: true, })
     category: Category
 
-    @ApiProperty()
+    @ApiProperty({ required: true, })
     intro: string
 
     @IsEnum(Status)
-    @ApiProperty()
+    @ApiProperty({ required: true, })
     status: Status
 
 }

@@ -25,4 +25,6 @@ export class UserEntity implements User {
     updatedAt: Date;
 
     role: $Enums.Role;
+
+    coin: number;
 }
