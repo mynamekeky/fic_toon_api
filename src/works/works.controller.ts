@@ -1,5 +1,15 @@
 import {
-  Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, UnauthorizedException, UploadedFile,
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  UnauthorizedException,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { WorksService } from './works.service';
@@ -13,7 +23,7 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 
 @Controller('works')
 export class WorksController {
-  constructor(private readonly worksService: WorksService) { }
+  constructor(private readonly worksService: WorksService) {}
 
   @Post()
   @ApiConsumes('multipart/form-data')
@@ -22,16 +32,20 @@ export class WorksController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: 'public/img',
+        destination: 'D:/project3.2/fic_toon/public/img/work',
         filename: (req, file, cb) => {
-          console.log(file)
+          console.log(file);
           cb(null, file.originalname);
         },
       }),
     }),
   )
-  async create(@Body() createWorkDto: CreateWorkDto, @Request() req: any, @UploadedFile() file: Express.Multer.File) {
-    console.log(req.user.role)
+  async create(
+    @Body() createWorkDto: CreateWorkDto,
+    @Request() req: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    console.log(req.user.role);
     if (req.user.role != 'CREATOR') {
       throw new UnauthorizedException();
     }
@@ -41,6 +55,14 @@ export class WorksController {
   @Get()
   async findAll() {
     return await this.worksService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get('/findAllByUser')
+  async findAllByUser(@Request() req: any) {
+    console.log(req.user.id);
+    return await this.worksService.findAllByUser(req.user.id);
   }
 
   @Get(':id')
@@ -56,14 +78,19 @@ export class WorksController {
       storage: diskStorage({
         destination: 'public/img',
         filename: (req, file, cb) => {
-          console.log(file)
+          console.log(file);
           cb(null, file.originalname);
         },
       }),
     }),
   )
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateWorkDto: UpdateWorkDto, @Request() req: any, @UploadedFile() file: Express.Multer.File) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateWorkDto: UpdateWorkDto,
+    @Request() req: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     if (req.user.role != 'CREATOR') {
       throw new UnauthorizedException();
     }

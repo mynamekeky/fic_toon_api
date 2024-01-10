@@ -5,11 +5,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class WorksService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createWorkDto: CreateWorkDto, req: any, file: any) {
-    console.log(file)
+    console.log(file);
     const createWork = await this.prisma.work.create({
       data: {
         userId: req.id,
@@ -20,16 +19,20 @@ export class WorksService {
         category: createWorkDto.category,
         intro: createWorkDto.intro,
         status: createWorkDto.status,
-      }
+      },
     });
     return {
       status: 200,
-      data: createWork
-    }
+      data: createWork,
+    };
   }
 
   async findAll() {
     return await this.prisma.work.findMany();
+  }
+
+  async findAllByUser(userId: any) {
+    return await this.prisma.work.findMany({ where: { userId } });
   }
 
   async findOne(id: number) {
@@ -45,31 +48,31 @@ export class WorksService {
       category: updateWorkDto?.category,
       intro: updateWorkDto?.intro,
       status: updateWorkDto?.status,
-    }
-    const work = await this.prisma.work.findFirst({ where: { id } })
+    };
+    const work = await this.prisma.work.findFirst({ where: { id } });
     const updateWork = await this.prisma.work.update({
       where: { id },
       data,
     });
     return {
       status: 200,
-      data: updateWork
-    }
+      data: updateWork,
+    };
   }
 
   async remove(id: number) {
-    const work = await this.prisma.work.findFirst({ where: { id } })
+    const work = await this.prisma.work.findFirst({ where: { id } });
     if (work) {
-      await this.prisma.work.delete({ where: { id } })
+      await this.prisma.work.delete({ where: { id } });
     } else {
       return {
         status: 404,
-        massage: `Not Found Work ID: ${id}`
-      }
+        massage: `Not Found Work ID: ${id}`,
+      };
     }
     return {
       status: 200,
-      massage: 'Success'
+      massage: 'Success',
     };
   }
 }

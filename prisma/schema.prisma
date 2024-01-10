@@ -36,7 +36,7 @@ model Work {
   type       Type
   category   Category
   intro      String      @db.Text
-  status     Status
+  status     Status      @default(hidden)
   characters Character[]
   espisodes  Espisode[]
 
