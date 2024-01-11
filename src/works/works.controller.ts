@@ -69,14 +69,15 @@ export class WorksController {
   async findOne(@Param('id') id: string) {
     return await this.worksService.findOne(+id);
   }
-
+  
+  @Patch(':id')
   @ApiConsumes('multipart/form-data')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: 'public/img',
+        destination: 'D:/project3.2/fic_toon/public/img/work',
         filename: (req, file, cb) => {
           console.log(file);
           cb(null, file.originalname);
@@ -84,7 +85,6 @@ export class WorksController {
       }),
     }),
   )
-  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateWorkDto: UpdateWorkDto,
