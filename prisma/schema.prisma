@@ -69,7 +69,7 @@ model UserDonate {
 model Espisode {
   id          Int               @id @default(autoincrement())
   title       String
-  contentText String            @db.Text
+  contentText String?           @db.Text
   work        Work              @relation(fields: [workId], references: [id])
   workId      Int
   status      Status
@@ -79,7 +79,7 @@ model Espisode {
 }
 
 model EspisodePicture {
-  id         Int      @id @default(autoincrement())
+  id         Int      @id @unique @default(autoincrement())
   picture    String
   espisode   Espisode @relation(fields: [espisodeId], references: [id])
   espisodeId Int
