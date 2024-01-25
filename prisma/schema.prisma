@@ -72,7 +72,7 @@ model Espisode {
   contentText String?           @db.Text
   work        Work              @relation(fields: [workId], references: [id])
   workId      Int
-  status      Status
+  status      Status            @default(hidden)
   pictures    EspisodePicture[]
 
   @@map("espisodes")
