@@ -12,10 +12,7 @@ import { Prisma } from '@prisma/client';
 export class EspisodesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    createEspisodeDto: CreateEspisodeDto,
-    files: any,
-  ) {
+  async create(createEspisodeDto: CreateEspisodeDto, files: any) {
     const createEspisode = await this.prisma.espisode.create({
       data: {
         workId: createEspisodeDto.workId,
@@ -86,7 +83,7 @@ export class EspisodesService {
       status: updateEspisodeDto.status,
       contentText: updateEspisodeDto.contentText,
     };
-    console.log(files);
+
     if (updateEspisodeDto.pictures) {
       const getData = await this.prisma.espisodePicture.findMany({
         where: { espisodeId: id },
@@ -112,11 +109,12 @@ export class EspisodesService {
               (image) => image.fieldname === `pictures[${index}][image]`,
             );
 
-            // console.log(foundImage)
+            console.log(foundImage)
             if (foundImage) {
               const findImage = await this.prisma.espisodePicture.findMany({
                 where: { espisodeId: id },
               });
+              console.log(item.id)
               return {
                 id: item?.id,
                 picture: foundImage?.filename,
@@ -124,6 +122,7 @@ export class EspisodesService {
             }
           }),
         );
+      
       espisodeData.pictures = {
         updateMany: espisodePictureData?.map((item) => {
           return {
@@ -132,6 +131,19 @@ export class EspisodesService {
           };
         }),
       };
+    } else {
+      if(files){
+        const img = files.map((item) => {
+          return {
+            espisodeId: id,
+            picture: item.originalname,
+          };
+        });
+  
+        await this.prisma.espisodePicture.createMany({
+          data: img,
+        });
+      }
     }
 
     const updateEspisode = await this.prisma.espisode.update({
@@ -145,7 +157,37 @@ export class EspisodesService {
     };
   }
 
-  async remove(id: number) {
-    return await this.prisma.espisode.delete({ where: { id } });
+  async deleteEpPic(id: number) {
+    return await this.prisma.espisodePicture.delete({ where: { id } });
   }
+
+  async remove(id: number) {
+    const getData = await this.prisma.espisode.findFirst({
+      where: { id },
+      include: { pictures: true },
+    });
+
+    if (!getData) {
+      throw new NotFoundException();
+    }
+
+    if (!getData?.pictures) {
+      await this.prisma.espisode.delete({ where: { id } });
+    } else {
+      await this.prisma.espisodePicture
+        .deleteMany({
+          where: { espisodeId: id },
+        })
+        .then(async () => {
+          await this.prisma.espisode.delete({ where: { id } });
+        });
+    }
+    console.log(!getData?.pictures);
+    // await this.prisma.espisode.delete({ where: { id } });
+    return {
+      statusCode: 200,
+      massage: 'success',
+    };
+  }
+  
 }

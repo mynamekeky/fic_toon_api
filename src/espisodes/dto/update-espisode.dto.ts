@@ -4,10 +4,10 @@ import { Transform, Type } from 'class-transformer';
 import { IsNumber, ValidateNested } from 'class-validator';
 
 export class UpdateEspisodePicture extends EspisodePicture {
-    @ApiProperty()
+    @ApiProperty({required: false})
     @Transform(({ value }) => parseInt(value))
     @IsNumber()
-    id: number;
+    id?: number;
   }
 
 export class UpdateEspisodeDto extends PartialType(CreateEspisodeDto) {

@@ -36,7 +36,10 @@ export class WorksService {
   }
 
   async findOne(id: number) {
-    return await this.prisma.work.findFirst({ where: { id } });
+    return await this.prisma.work.findFirst({
+      where: { id },
+      include: { characters: true },
+    });
   }
 
   async update(id: number, updateWorkDto: UpdateWorkDto, file: any) {

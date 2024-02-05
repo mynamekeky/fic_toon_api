@@ -88,11 +88,17 @@ export class EspisodesController {
     @Body() updateEspisodeDto: UpdateEspisodeDto,
     @UploadedFiles() images: Array<Express.Multer.File>,
   ) {
+    console.log(images)
     return await this.espisodesService.update(+id, updateEspisodeDto, images);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.espisodesService.remove(+id);
+  }
+
+  @Delete('/deletePic/:id')
+  async deletePic(@Param('id') id: string) {
+    return await this.espisodesService.deleteEpPic(+id);
   }
 }
