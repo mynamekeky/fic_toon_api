@@ -27,7 +27,7 @@ export class CharactersService {
   }
 
   async findAll() {
-    return await this.prisma.character.findMany();
+    return await this.prisma.character.findMany({include: { work: true },});
   }
 
   async findOne(id: number) {

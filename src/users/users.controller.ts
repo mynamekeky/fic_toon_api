@@ -16,6 +16,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { DonateDto } from './dto/donate.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -26,6 +27,13 @@ export class UsersController {
   @ApiCreatedResponse({ type: UserEntity })
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
+  }
+
+  @Post('/donate')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async donate(@Body() donateDto: DonateDto, @Request() req: any,) {
+    return this.usersService.donate(donateDto, req.user)
   }
 
   @Get()
